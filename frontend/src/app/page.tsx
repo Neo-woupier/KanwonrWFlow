@@ -1,4 +1,4 @@
-// /frontend/app/mainpage/page.tsx
+// /frontend/src/app/page.tsx
 
 import Image from "next/image";
 
