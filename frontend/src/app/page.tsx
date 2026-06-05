@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// 1. จำลองข้อมูล (Mock Data) สำหรับ Data Table
+// First Data input and user note is here
 const initialTasks = [
   { id: "TASK-8782", title: "สร้างฐานข้อมูล PostgreSQL", status: "Todo", priority: "High" },
   { id: "TASK-7878", title: "ออกแบบหน้า UI สำหรับ Login", status: "In Progress", priority: "Medium" },
@@ -21,91 +21,134 @@ const initialTasks = [
 ];
 
 export default function KanbanTablePage() {
-  const [activeMenu, setActiveMenu] = useState("Todo");
+  const [activeTab, setActiveTab] = useState("Todo");
 
-  // รายการเมนูด้านบน (เหมือน Home, Docs ของ shadcn)
-  const menus = ["Todo", "In Progress", "Done", "On Hold"];
-
+  //top tabs menu  main page 
+  const tabs = [
+    { name: "Todo", count: 12 },
+    { name: "In Progress", count: 3 },
+    { name: "Done", count: 24 },
+    { name: "On Hold", count: 1 }
+  ];
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      
-      {/* --- HEADER SECTION --- */}
-      <header className="flex justify-between items-center px-8 py-4 border-b border-zinc-800">
+    <div className="min-h-screen bg-black text-zinc-300 font-sans p-8">
+      <div className="max-w-5xl mx-auto">
         
-        {/* ซ้าย: แถบเมนู (Navigation แบบ shadcn site) */}
-        <nav className="flex items-center space-x-6 text-sm font-medium text-zinc-400">
-          {menus.map((menu) => (
-            <span
-              key={menu}
-              onClick={() => setActiveMenu(menu)}
-              className={`cursor-pointer transition-colors hover:text-white ${
-                activeMenu === menu ? "text-white" : ""
+        {/* --- 1. แถบ Tabs ด้านบน (แทน Code, Issues ฯลฯ) --- */}
+        <nav className="flex space-x-2 border-b border-zinc-800 mb-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.name}
+              onClick={() => setActiveTab(tab.name)}
+              className={`flex items-center px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
+                activeTab === tab.name
+                  ? "border-orange-500 text-zinc-100" // สีไฮไลท์ Tab สไตล์ GitHub
+                  : "border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
               }`}
             >
-              {menu}
-            </span>
+              {tab.name}
+              <span className="ml-2 inline-flex items-center justify-center bg-zinc-800/80 text-zinc-300 text-xs rounded-full px-2 py-0.5">
+                {tab.count}
+              </span>
+            </button>
           ))}
         </nav>
 
-        {/* ขวา: ช่องเพิ่มงาน + ชื่อโปรเจกต์ */}
-        <div className="flex items-center space-x-6">
+        {/* --- 2. แถบ Search และปุ่ม New --- */}
+        <div className="flex justify-between items-center mb-4">
           
-          {/* ช่อง Input และปุ่ม Add Node */}
-          <div className="flex items-center space-x-2">
+          {/* ช่อง Search ด้านซ้าย */}
+          <div className="flex w-full max-w-md items-center">
             <Input 
-              placeholder="Task name..." 
-              className="h-8 w-[200px] bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus-visible:ring-zinc-700" 
+              type="text" 
+              placeholder={`Search in ${activeTab}...`} 
+              className="bg-zinc-900/50 border-zinc-700 text-zinc-100 focus-visible:ring-zinc-600 rounded-md"
             />
-            <Button variant="outline" size="sm" className="h-8 bg-black text-white border-zinc-800 hover:bg-zinc-800 hover:text-white">
-              <Plus className="h-4 w-4 mr-1" /> New
-            </Button>
           </div>
 
-          {/* ชื่อ My Kanban Workflow (ขวาบนสุด) */}
-          <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent border-l border-zinc-800 pl-6">
-            My Kanban Workflow
-          </h1>
+          {/* ปุ่ม New ด้านขวา (สีเขียวสไตล์ GitHub) */}
+          <Button className="bg-[#238636] hover:bg-[#2ea043] text-white font-medium ml-4 border border-[rgba(240,246,252,0.1)]">
+            <Plus className="mr-1 h-4 w-4" />
+            New
+          </Button>
+        </div>
+
+        {/* --- 3. กล่องรายการ Tasks (สไตล์ GitHub Issues List) --- */}
+        <div className="border border-zinc-700 rounded-md overflow-hidden bg-zinc-950">
           
-        </div>
-      </header>
+          {/* ส่วนหัวของ List (Header) */}
+          <div className="bg-zinc-900 px-4 py-3 border-b border-zinc-700 flex justify-between items-center text-sm text-zinc-400">
+            <div className="flex items-center space-x-4 font-semibold text-zinc-300">
+              {/* จำลองตัวเลข Open / Closed */}
+              <span>{tabs.find(t => t.name === activeTab)?.count} {activeTab} tasks</span>
+            </div>
+            <div className="flex space-x-4">
+              <span className="cursor-pointer hover:text-zinc-200">Sort ▾</span>
+            </div>
+          </div>
 
-      {/* --- MAIN CONTENT (DATA TABLE) --- */}
-      <main className="flex-1 p-8 max-w-7xl mx-auto w-full">
-        
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold tracking-tight text-white">{activeMenu} Tasks</h2>
-          <p className="text-sm text-zinc-400 mt-1">รายการงานทั้งหมดที่อยู่ในสถานะ {activeMenu}</p>
-        </div>
+          {/* ลิสต์รายการ Task */}
+          <div className="divide-y divide-zinc-800/80">
+            {initialTasks
+              .filter(task => task.status === activeTab) // กรองข้อมูลตาม Tab ที่กด (ถ้ายังไม่มีข้อมูลให้แสดงหมด ลบ .filter ออกได้ครับ)
+              .map((task) => (
+              <div key={task.id} className="p-4 hover:bg-zinc-900/50 transition-colors flex items-start space-x-3">
+                
+                {/* ไอคอนหน้า Task (สถานะ Open/Closed) */}
+                <div className="mt-1">
+                  <div className="h-4 w-4 rounded-full border-[2.5px] border-[#3fb950]"></div>
+                </div>
 
-        {/* ตาราง Data Table */}
-        <div className="rounded-md border border-zinc-800 overflow-hidden bg-zinc-950/50">
-          <Table>
-            <TableHeader className="bg-zinc-900/50 hover:bg-zinc-900/50">
-              <TableRow className="border-zinc-800">
-                <TableHead className="w-[120px] text-zinc-400">Task ID</TableHead>
-                <TableHead className="text-zinc-400">Title</TableHead>
-                <TableHead className="text-zinc-400">Status</TableHead>
-                <TableHead className="text-right text-zinc-400">Priority</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {initialTasks.map((task) => (
-                <TableRow key={task.id} className="border-zinc-800 hover:bg-zinc-800/50 transition-colors">
-                  <TableCell className="font-medium text-zinc-300">{task.id}</TableCell>
-                  <TableCell className="text-zinc-100">{task.title}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300">
-                      {task.status}
+                {/* รายละเอียด Task */}
+                <div className="flex-1">
+                  
+                  {/* ชื่อ Task (ตัวใหญ่) และ Tag (ยืม priority มาใช้เป็นหมวดหมู่ก่อน) */}
+                  <div className="flex items-center flex-wrap gap-2 mb-1">
+                    <a href="#" className="text-[16px] font-semibold text-zinc-100 hover:text-blue-400 transition-colors">
+                      {task.title}
+                    </a>
+                    
+                    {/* ป้าย Category (จำลองสีตาม Priority) */}
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${
+                      task.priority === 'High' ? 'bg-[#ff7b721a] text-[#ff7b72] border-[#ff7b7266]' :
+                      task.priority === 'Medium' ? 'bg-[#d299221a] text-[#d29922] border-[#d2992266]' :
+                      'bg-[#58a6ff1a] text-[#58a6ff] border-[#58a6ff66]'
+                    }`}>
+                      {task.priority}
                     </span>
-                  </TableCell>
-                  <TableCell className="text-right text-zinc-300">{task.priority}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                  </div>
 
-      </main>
+                  {/* ข้อมูลหมวดหมู่ และ วันที่สร้าง (ตามรีเควส: #หมวดหมู่ วันที่) */}
+                  <div className="text-xs text-zinc-500 mt-1">
+                    <span>#{task.id}</span>
+                    <span className="mx-1">•</span>
+                    <span>{task.status}</span>
+                    <span className="mx-1">•</span>
+                    <span>created on 4 Jun 2026</span> {/* จำลองวันที่แบบ Hardcode ไว้ก่อน */}
+                  </div>
+                </div>
+
+                {/* จำนวนคอมเมนต์ (ขวาสุด) */}
+                <div className="flex items-center text-zinc-500 text-xs">
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  2
+                </div>
+
+              </div>
+            ))}
+            
+            {/* โชว์ข้อความเผื่อกรณีไม่มี Task ในหน้านั้นๆ */}
+            {initialTasks.filter(task => task.status === activeTab).length === 0 && (
+              <div className="p-8 text-center text-zinc-500 text-sm">
+                No tasks match your search or current tab.
+              </div>
+            )}
+          </div>
+
+        </div>
+      </div>
     </div>
-  );
+  );  
 }
