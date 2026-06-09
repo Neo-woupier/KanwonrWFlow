@@ -12,10 +12,6 @@ export default function KanbanTablePage() {
   const [activeTab, setActiveTab] = useState<string>("Todo");
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [newTaskDeadline, setNewTaskDeadline] = useState("");
-  const [hasDeadline, setHasDeadline] = useState(false);
-  const [noteMode, setNoteMode] = useState<"text" | "draw">("text");
 
   const tabs = [
     { name: "Todo", count: tasks.filter(t => t.status === "Todo").length },
@@ -24,20 +20,20 @@ export default function KanbanTablePage() {
     { name: "On Hold", count: tasks.filter(t => t.status === "On Hold").length }
   ];
 
-  // รอรับ title กับ deadline ที่ส่งข้ามมาจาก CreateTaskModal
+  // 🚨 เช็คตรงนี้: ต้องรับแค่ (title, deadline) 2 ค่าเท่านั้นครับบอส
   const handleSaveNewTask = (title: string, deadline: string) => {
     const newTask: Task = {
       id: `TASK-${Math.floor(1000 + Math.random() * 9000)}`,
+      title: title,
       status: "Todo",
       priority: "Medium",
       createdAt: "9 Jun 2026",
-      title: title, // ใช้ title ที่รับมา
-      deadline: deadline || "No deadline set" // ใช้ deadline ที่รับมา
+      deadline: deadline || "No deadline set" // ถ้านไม่มีกำหนด จะขึ้นว่า No deadline set
     };
 
     setTasks([...tasks, newTask]);
-    setIsModalOpen(false); // ปิด Modal
-    setActiveTab("Todo"); // สลับกลับหน้า Todo
+    setIsModalOpen(false); // ปิด Pop-up
+    setActiveTab("Todo");  // เด้งกลับมาหน้า Todo เพื่อดูงานที่สร้างใหม่
   };
 
   return (
@@ -94,7 +90,6 @@ export default function KanbanTablePage() {
           </Button>
         </div>
 
-        {/* ตาราง */}
         {/* ตาราง */}
         <TaskList 
           tasks={tasks} 

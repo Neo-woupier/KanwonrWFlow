@@ -1,7 +1,11 @@
 import React, { useState } from "react";
-import { X, Plus } from "lucide-react";
+import { format } from "date-fns"; 
+// 🚨 บรรทัดนี้คือจุดเกิดเหตุ: เช็คให้ชัวร์ว่ามีแค่บรรทัดเดียว ห้ามมี X, Plus โผล่มาบรรทัดอื่นอีกครับ
+import { X, Plus, Calendar as CalendarIcon } from "lucide-react"; 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar"; 
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // กำหนดสะพานเชื่อม (Props) ให้ไฟล์นี้รับคำสั่งจากหน้า Page ได้
 interface CreateTaskModalProps {
@@ -16,6 +20,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
   const [newTaskDeadline, setNewTaskDeadline] = useState("");
   const [hasDeadline, setHasDeadline] = useState(false);
   const [noteMode, setNoteMode] = useState<"text" | "draw">("text");
+  const [selectedDate, setSelectedDate] = useState<Date>();
 
   // ถ้าไม่ได้สั่งเปิด ให้คืนค่า null (ไม่แสดงอะไรเลย)
   if (!isOpen) return null;
@@ -23,9 +28,16 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
   // ฟังก์ชันแพ็คข้อมูลส่งกลับ
   const handleSaveClick = () => {
     if (!newTaskTitle.trim()) return;
+
+    // --- เริ่มกระบวนการแปลงร่างวันที่ ---
+    let finalDeadline = "";
+    if (hasDeadline && newTaskDeadline) {
+      const [year, month, day] = newTaskDeadline.split("-");
+      finalDeadline = `${day}/${month}/${year}`; // ประกอบร่างใหม่เป็น DD/MM/YYYY
+    }
     
-    // ส่งข้อมูลกลับไปให้หน้า Page ผ่าน onSave
-    onSave(newTaskTitle, hasDeadline ? newTaskDeadline : "");
+    // ส่งไปแค่นี้คลีนๆ (ชื่อ, วันที่ที่แปลงแล้วหรือค่าว่าง)
+    onSave(newTaskTitle, finalDeadline);
     
     // เคลียร์ค่าคืนสภาพเดิม
     setNewTaskTitle("");
@@ -40,7 +52,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
         <div className="flex justify-between items-center mb-5 border-b border-zinc-800 pb-4">
           <h2 className="text-xl font-semibold text-zinc-100">Create New Task</h2>
           <button 
-            onClick={onClose} // ใช้คำสั่ง onClose ที่ส่งมาจากหน้า Page
+            onClick={onClose} 
             className="text-zinc-500 hover:text-zinc-300 transition-colors bg-zinc-900/50 hover:bg-zinc-800 p-1.5 rounded-md"
           >
             <X className="w-5 h-5" />
@@ -125,7 +137,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
 
         </div>
 
-        <div className="flex justify-end space-x-3 mt-8 pt-4 border-t border-zinc-800/80">
+        <div className="flex justify-end space-x-3 mt-8 pt-4 border-t border-t-zinc-800/80">
           <Button 
             variant="ghost" 
             onClick={onClose}
