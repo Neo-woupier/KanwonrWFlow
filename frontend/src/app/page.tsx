@@ -1,55 +1,69 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Settings } from "lucide-react"; // เพิ่ม Settings เข้ามาตรงนี้
+import { Plus, Settings, X } from "lucide-react"; // เพิ่ม X สำหรับปุ่มปิด
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-// (สมมติว่าคุณมี initialTasks อยู่ด้านบนโค้ดเหมือนเดิม)
-const initialTasks = [
-  { id: "TASK-8782", title: "สร้างฐานข้อมูล PostgreSQL", status: "Todo", priority: "High" },
-  { id: "TASK-7878", title: "ออกแบบหน้า UI สำหรับ Login", status: "In Progress", priority: "Medium" },
-  { id: "TASK-7839", title: "อัปเดตเอกสาร API", status: "Done", priority: "Low" },
-];
+import TaskList from "@/components/kanban/TaskList";
+import { initialTasks, Task } from "@/data/mockTasks";
 
 export default function KanbanTablePage() {
-  const [activeTab, setActiveTab] = useState("Todo");
+  const [activeTab, setActiveTab] = useState<string>("Todo");
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
-  // เมนูด้านบน (สไตล์ Tabs ของ GitHub)
+  // --- State สำหรับคุม Pop-up ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDeadline, setNewTaskDeadline] = useState("");
+
   const tabs = [
-    { name: "Todo", count: 12 },
-    { name: "In Progress", count: 3 },
-    { name: "Done", count: 24 },
-    { name: "On Hold", count: 1 }
+    { name: "Todo", count: tasks.filter(t => t.status === "Todo").length },
+    { name: "In Progress", count: tasks.filter(t => t.status === "In Progress").length },
+    { name: "Done", count: tasks.filter(t => t.status === "Done").length },
+    { name: "On Hold", count: tasks.filter(t => t.status === "On Hold").length }
   ];
 
+  // --- ฟังก์ชันบันทึกข้อมูลจาก Pop-up ---
+  const handleSaveNewTask = () => {
+    // ป้องกันคนไม่กรอกชื่อแล้วกดเซฟ
+    if (!newTaskTitle.trim()) return;
+
+    const newTask: Task = {
+      id: `TASK-${Math.floor(1000 + Math.random() * 9000)}`,
+      title: newTaskTitle,
+      status: "Todo", // บังคับให้งานใหม่ไปตกที่ Todo เสมอ ตามรีเควสบอส!
+      priority: "Medium",
+      createdAt: "9 Jun 2026",
+      deadline: newTaskDeadline || "No deadline set" // ดึงค่าจากช่องกรอก หรือใส่ค่า default ถ้าไม่กรอก
+    };
+
+    setTasks([...tasks, newTask]);
+    
+    // เคลียร์ค่าและปิด Pop-up
+    setNewTaskTitle("");
+    setNewTaskDeadline("");
+    setIsModalOpen(false);
+    
+    // สลับหน้าจอไปที่ Tab Todo อัตโนมัติเพื่อให้เห็นงานใหม่
+    setActiveTab("Todo");
+  };
+
   return (
-    <div className="min-h-screen bg-black text-zinc-300 font-sans p-8">
+    <div className="min-h-screen bg-black text-zinc-300 font-sans p-8 relative">
       <div className="max-w-5xl mx-auto">
         
-        {/* --- ส่วนที่เพิ่มใหม่: Header (Username & Settings) มุมขวาบน --- */}
+        {/* Header */}
         <div className="flex justify-end items-center space-x-3 mb-6">
           <div className="text-sm font-medium text-zinc-300">
             <span className="text-zinc-500 mr-1">@Neo-woupier</span>
             Kanban workflow
           </div>
-          <button 
-            className="p-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/80 transition-all cursor-pointer"
-            title="Settings (Coming soon)"
-          >
+          <button className="p-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/80 transition-all cursor-pointer">
             <Settings className="w-5 h-5" />
           </button>
         </div>
 
-        {/* --- 1. แถบ Tabs ด้านบน --- */}
+        {/* แถบ Tabs */}
         <nav className="flex space-x-2 border-b border-zinc-800 mb-6">
           {tabs.map((tab) => (
             <button
@@ -57,7 +71,7 @@ export default function KanbanTablePage() {
               onClick={() => setActiveTab(tab.name)}
               className={`flex items-center px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
                 activeTab === tab.name
-                  ? "border-orange-500 text-zinc-100" // สีไฮไลท์ Tab สไตล์ GitHub
+                  ? "border-orange-500 text-zinc-100"
                   : "border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
               }`}
             >
@@ -69,9 +83,8 @@ export default function KanbanTablePage() {
           ))}
         </nav>
 
-        {/* --- 2. แถบ Search และปุ่ม New --- */}
+        {/* Search & New Button */}
         <div className="flex justify-between items-center mb-4">
-          {/* ช่อง Search ด้านซ้าย */}
           <div className="flex w-full max-w-md items-center">
             <Input 
               type="text" 
@@ -80,91 +93,80 @@ export default function KanbanTablePage() {
             />
           </div>
 
-          {/* ปุ่ม New ด้านขวา (สีเขียว GitHub) */}
-          <Button className="bg-[#238636] hover:bg-[#2ea043] text-white font-medium ml-4 border border-[rgba(240,246,252,0.1)]">
+          <Button 
+            onClick={() => setIsModalOpen(true)} // เปลี่ยนมากดแล้วเปิด Pop-up แทน
+            className="bg-[#238636] hover:bg-[#2ea043] text-white font-medium ml-4 border border-[rgba(240,246,252,0.1)]"
+          >
             <Plus className="mr-1 h-4 w-4" />
             New
           </Button>
         </div>
 
-        {/* --- 3. ตารางแสดงรายการ Tasks (UI Components) --- */}
-        <div className="border border-zinc-700 rounded-md overflow-hidden bg-zinc-950">
-          
-          <Table>
-            {/* ส่วนหัวของตาราง */}
-            <TableHeader className="bg-zinc-900 hover:bg-zinc-900 border-b border-zinc-700">
-              <TableRow className="hover:bg-transparent border-b-0">
-                <TableHead className="px-4 py-3 text-sm font-semibold text-zinc-300 h-auto align-middle">
-                  {tabs.find(t => t.name === activeTab)?.count} {activeTab} tasks
-                </TableHead>
-                <TableHead className="text-right px-4 py-3 text-sm font-semibold text-zinc-400 h-auto align-middle cursor-pointer hover:text-zinc-200 w-[120px]">
-                  Sort ▾
-                </TableHead>
-              </TableRow>
-            </TableHeader>
+        {/* ตาราง */}
+        <TaskList 
+          tasks={tasks} 
+          activeTab={activeTab} 
+          tabCount={tabs.find(t => t.name === activeTab)?.count || 0} 
+        />
 
-            {/* ส่วนเนื้อหา */}
-            <TableBody className="divide-y divide-zinc-800/80">
-              {initialTasks
-                .filter(task => task.status === activeTab)
-                .map((task) => (
-                  <TableRow 
-                    key={task.id} 
-                    className="hover:bg-zinc-900/50 transition-colors border-b border-zinc-800/80 last:border-b-0"
-                  >
-                    <TableCell className="p-4 align-top">
-                      <div className="flex items-start space-x-3">
-                        <div className="mt-1 flex-shrink-0">
-                          <div className="h-4 w-4 rounded-full border-[2.5px] border-[#3fb950]"></div>
-                        </div>
-
-                        <div>
-                          <div className="flex items-center flex-wrap gap-2 mb-1">
-                            <a href="#" className="text-[16px] font-semibold text-zinc-100 hover:text-blue-400 transition-colors">
-                              {task.title}
-                            </a>
-                            
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${
-                              task.priority === 'High' ? 'bg-[#ff7b721a] text-[#ff7b72] border-[#ff7b7266]' :
-                              task.priority === 'Medium' ? 'bg-[#d299221a] text-[#d29922] border-[#d2992266]' :
-                              'bg-[#58a6ff1a] text-[#58a6ff] border-[#58a6ff66]'
-                            }`}>
-                              {task.priority}
-                            </span>
-                          </div>
-
-                          <div className="text-xs text-zinc-500 mt-1">
-                            <span>#{task.id}</span>
-                            <span className="mx-1">•</span>
-                            <span>{task.status}</span>
-                            <span className="mx-1">•</span>
-                            <span>created on 4 Jun 2026</span>
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-
-                    <TableCell className="p-4 text-right align-middle text-zinc-500 text-xs w-[120px]">
-                      <div className="flex items-center justify-end">
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        2
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-
-          {initialTasks.filter(task => task.status === activeTab).length === 0 && (
-            <div className="p-8 text-center text-zinc-500 text-sm border-t border-zinc-800">
-              No tasks match your search or current tab.
-            </div>
-          )}
-
-        </div>
       </div>
+
+      {/* --- ส่วนที่เพิ่มใหม่: Pop-up Modal สร้าง Task ใหม่ --- */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-zinc-950 border border-zinc-700 rounded-xl p-6 w-full max-w-lg shadow-2xl">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-xl font-semibold text-zinc-100">Create New Task</h2>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Task Title</label>
+                <Input 
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  placeholder="e.g. Update user authentication..." 
+                  className="bg-zinc-900 border-zinc-700 text-zinc-100"
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Deadline</label>
+                <Input 
+                  type="date"
+                  value={newTaskDeadline}
+                  onChange={(e) => setNewTaskDeadline(e.target.value)}
+                  className="bg-zinc-900 border-zinc-700 text-zinc-100 [color-scheme:dark]" // ทำให้ไอคอนปฏิทินเป็นสีเข้ม
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 mt-8">
+              <Button 
+                variant="ghost" 
+                onClick={() => setIsModalOpen(false)}
+                className="text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveNewTask}
+                className="bg-[#238636] hover:bg-[#2ea043] text-white"
+              >
+                Save Task
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
