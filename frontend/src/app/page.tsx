@@ -1,20 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Settings, X } from "lucide-react"; // เพิ่ม X สำหรับปุ่มปิด
+import { Plus, Settings, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import TaskList from "@/components/kanban/TaskList";
 import { initialTasks, Task } from "@/data/mockTasks";
+import CreateTaskModal from "@/components/kanban/CreateTaskModel";
 
 export default function KanbanTablePage() {
   const [activeTab, setActiveTab] = useState<string>("Todo");
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-
-  // --- State สำหรับคุม Pop-up ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDeadline, setNewTaskDeadline] = useState("");
+  const [hasDeadline, setHasDeadline] = useState(false);
+  const [noteMode, setNoteMode] = useState<"text" | "draw">("text");
 
   const tabs = [
     { name: "Todo", count: tasks.filter(t => t.status === "Todo").length },
@@ -23,29 +24,20 @@ export default function KanbanTablePage() {
     { name: "On Hold", count: tasks.filter(t => t.status === "On Hold").length }
   ];
 
-  // --- ฟังก์ชันบันทึกข้อมูลจาก Pop-up ---
-  const handleSaveNewTask = () => {
-    // ป้องกันคนไม่กรอกชื่อแล้วกดเซฟ
-    if (!newTaskTitle.trim()) return;
-
+  // รอรับ title กับ deadline ที่ส่งข้ามมาจาก CreateTaskModal
+  const handleSaveNewTask = (title: string, deadline: string) => {
     const newTask: Task = {
       id: `TASK-${Math.floor(1000 + Math.random() * 9000)}`,
-      title: newTaskTitle,
-      status: "Todo", // บังคับให้งานใหม่ไปตกที่ Todo เสมอ ตามรีเควสบอส!
+      status: "Todo",
       priority: "Medium",
       createdAt: "9 Jun 2026",
-      deadline: newTaskDeadline || "No deadline set" // ดึงค่าจากช่องกรอก หรือใส่ค่า default ถ้าไม่กรอก
+      title: title, // ใช้ title ที่รับมา
+      deadline: deadline || "No deadline set" // ใช้ deadline ที่รับมา
     };
 
     setTasks([...tasks, newTask]);
-    
-    // เคลียร์ค่าและปิด Pop-up
-    setNewTaskTitle("");
-    setNewTaskDeadline("");
-    setIsModalOpen(false);
-    
-    // สลับหน้าจอไปที่ Tab Todo อัตโนมัติเพื่อให้เห็นงานใหม่
-    setActiveTab("Todo");
+    setIsModalOpen(false); // ปิด Modal
+    setActiveTab("Todo"); // สลับกลับหน้า Todo
   };
 
   return (
@@ -103,6 +95,7 @@ export default function KanbanTablePage() {
         </div>
 
         {/* ตาราง */}
+        {/* ตาราง */}
         <TaskList 
           tasks={tasks} 
           activeTab={activeTab} 
@@ -111,62 +104,13 @@ export default function KanbanTablePage() {
 
       </div>
 
-      {/* --- ส่วนที่เพิ่มใหม่: Pop-up Modal สร้าง Task ใหม่ --- */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-zinc-950 border border-zinc-700 rounded-xl p-6 w-full max-w-lg shadow-2xl">
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-semibold text-zinc-100">Create New Task</h2>
-              <button 
-                onClick={() => setIsModalOpen(false)}
-                className="text-zinc-500 hover:text-zinc-300 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* --- เรียกใช้ Modal สั้นๆ แค่นี้เลย! --- */}
+      <CreateTaskModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSave={handleSaveNewTask} 
+      />
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Task Title</label>
-                <Input 
-                  value={newTaskTitle}
-                  onChange={(e) => setNewTaskTitle(e.target.value)}
-                  placeholder="e.g. Update user authentication..." 
-                  className="bg-zinc-900 border-zinc-700 text-zinc-100"
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Deadline</label>
-                <Input 
-                  type="date"
-                  value={newTaskDeadline}
-                  onChange={(e) => setNewTaskDeadline(e.target.value)}
-                  className="bg-zinc-900 border-zinc-700 text-zinc-100 [color-scheme:dark]" // ทำให้ไอคอนปฏิทินเป็นสีเข้ม
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-3 mt-8">
-              <Button 
-                variant="ghost" 
-                onClick={() => setIsModalOpen(false)}
-                className="text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleSaveNewTask}
-                className="bg-[#238636] hover:bg-[#2ea043] text-white"
-              >
-                Save Task
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-    </div>
+      </div>
   );
 }
