@@ -27,11 +27,11 @@ function Calendar({
         nav: "space-x-1 flex items-center",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1 text-zinc-100 border-zinc-800 hover:bg-zinc-800"
+          "h-14 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute -left-3 text-zinc-100 border-zinc-800 hover:bg-zinc-800"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1 text-zinc-100 border-zinc-800 hover:bg-zinc-800"
+          "h-14 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute -right-8 text-zinc-100 border-zinc-800 hover:bg-zinc-800"
         ),
         weekdays: "flex",
         weekday: "text-zinc-400 rounded-md w-9 font-normal text-[0.8rem]", // ปรับสีชื่อวัน (อา.-ส.) ให้เห็นชัด
