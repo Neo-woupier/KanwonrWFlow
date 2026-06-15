@@ -10,7 +10,7 @@ import { Input } from "../ui/input"; // หรือ "@/components/ui/input" ต
 interface CreateTaskModalProps {
   isOpen: boolean; // เช็คว่าเปิดอยู่ไหม
   onClose: () => void; // ฟังก์ชันตอนกดปิด
-  onSave: (title: string, deadline: string) => void; // ฟังก์ชันตอนกดเซฟ พร้อมส่งข้อมูลกลับ
+  onSave: (title: string, deadline: string,description: string) => void; // ฟังก์ชันตอนกดเซฟ พร้อมส่งข้อมูลกลับ
 }
 
 export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskModalProps) {
@@ -20,6 +20,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
   const [hasDeadline, setHasDeadline] = useState(false);
   const [noteMode, setNoteMode] = useState<"text" | "draw">("text");
   const [selectedDate, setSelectedDate] = useState<Date>(); // ใช้เก็บก้อนวัตถุวันที่ของปฏิทิน
+  const [noteText, setNoteText] = useState("");
 
   // ถ้าไม่ได้สั่งเปิด ให้คืนค่า null (ไม่แสดงอะไรเลย)
   if (!isOpen) return null;
@@ -35,13 +36,15 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
     }
     
     // ส่งไปแค่นี้คลีนๆ (ชื่อ, วันที่ที่แปลงแล้วหรือค่าว่าง)
-    onSave(newTaskTitle, finalDeadline);
+    onSave(newTaskTitle, finalDeadline, noteText);
     
     // เคลียร์ค่าคืนสภาพเดิม
     setNewTaskTitle("");
     setNewTaskDeadline("");
     setHasDeadline(false);
     setSelectedDate(undefined);
+    setNoteText("");
+    onClose(); // ด
   };
 
   return (
@@ -158,6 +161,8 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
               <textarea
                 placeholder="Add details, links, or context here..."
                 className="w-full h-24 rounded-md bg-zinc-900/50 border border-zinc-800 text-zinc-100 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)} 
               />
             ) : (
               <div className="w-full h-32 rounded-md bg-zinc-900/30 border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center text-zinc-500 cursor-crosshair">
