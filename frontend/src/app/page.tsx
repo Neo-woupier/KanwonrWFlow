@@ -38,16 +38,19 @@ export default function KanbanTablePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-zinc-300 font-sans p-8 relative">
+    <div className="min-h-screen bg-black text-zinc-300 font-sans p-4 sm:p-8 relative">
       <div className="max-w-5xl mx-auto">
-        
         {/* Header */}
-        <div className="flex justify-end items-center space-x-3 mb-6">
-          <div className="text-sm font-medium text-zinc-300">
-            <span className="text-zinc-500 mr-1">@Neo-woupier</span>
-            Kanban workflow
+        <div className="flex justify-between sm:justify-end items-center gap-3 mb-6">
+          <div className="text-xs sm:text-sm font-medium text-zinc-300">
+            <span className="text-zinc-500 block sm:inline mr-1">
+              @Neo-woupier
+            </span>
+            <span className="text-zinc-400 sm:text-zinc-300">
+              Kanban workflow
+            </span>
           </div>
-          <button className="p-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/80 transition-all cursor-pointer">
+          <button className="p-2 rounded-full text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/80 transition-all cursor-pointer shrink-0">
             <Settings className="w-5 h-5" />
           </button>
         </div>
@@ -75,14 +78,14 @@ export default function KanbanTablePage() {
         {/* Search & New Button */}
         <div className="flex justify-between items-center mb-4">
           <div className="flex w-full max-w-md items-center">
-            <Input 
-              type="text" 
-              placeholder={`Search in ${activeTab}...`} 
+            <Input
+              type="text"
+              placeholder={`Search in ${activeTab}...`}
               className="bg-zinc-900/50 border-zinc-700 text-zinc-100 focus-visible:ring-zinc-600 rounded-md"
             />
           </div>
 
-          <Button 
+          <Button
             onClick={() => setIsModalOpen(true)} // เปลี่ยนมากดแล้วเปิด Pop-up แทน
             className="bg-[#238636] hover:bg-[#2ea043] text-white font-medium ml-4 border border-[rgba(240,246,252,0.1)]"
           >
@@ -92,21 +95,19 @@ export default function KanbanTablePage() {
         </div>
 
         {/* ตาราง */}
-        <TaskList 
-          tasks={tasks} 
-          activeTab={activeTab} 
-          tabCount={tabs.find(t => t.name === activeTab)?.count || 0} 
+        <TaskList
+          tasks={tasks}
+          activeTab={activeTab}
+          tabCount={tabs.find((t) => t.name === activeTab)?.count || 0}
         />
-
       </div>
 
       {/* --- เรียกใช้ Modal สั้นๆ แค่นี้เลย! --- */}
-      <CreateTaskModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSave={handleSaveNewTask} 
+      <CreateTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveNewTask}
       />
-
-      </div>
+    </div>
   );
 }

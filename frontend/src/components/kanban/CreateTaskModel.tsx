@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "../ui/calendar"; // 🎯 ปรับให้เรียกจากตำแหน่งโฟลเดอร์ที่ถูกต้อง
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"; // 🎯 ปรับตำแหน่งโฟลเดอร์
 import { Input } from "../ui/input"; // หรือ "@/components/ui/input" ตามโครงสร้างไฟล์บอส
+import { title } from "process";
+import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
 
 // กำหนดสะพานเชื่อม (Props) ให้ไฟล์นี้รับคำสั่งจากหน้า Page ได้
 interface CreateTaskModalProps {
   isOpen: boolean; // เช็คว่าเปิดอยู่ไหม
   onClose: () => void; // ฟังก์ชันตอนกดปิด
-  onSave: (title: string, deadline: string,description: string) => void; // ฟังก์ชันตอนกดเซฟ พร้อมส่งข้อมูลกลับ
+  onSave: ( title: string, deadline: string, description: string) => void; // ฟังก์ชันตอนกดเซฟ พร้อมส่งข้อมูลกลับ
+  onAddNote?: (note: string) => void;
+  onAddDrawing?: (drawingData: string) => void;
 }
 
 export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskModalProps) {
@@ -24,19 +28,22 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
 
   // ถ้าไม่ได้สั่งเปิด ให้คืนค่า null (ไม่แสดงอะไรเลย)
   if (!isOpen) return null;
+  
 
   // ฟังก์ชันแพ็คข้อมูลส่งกลับ
   const handleSaveClick = () => {
     if (!newTaskTitle.trim()) return;
-
     // --- ส่งวันที่ที่แปลงร่างเป็น DD/MM/YYYY เรียบร้อยแล้วข้ามไปที่หน้า Page ---
     let finalDeadline = "";
     if (hasDeadline && newTaskDeadline) {
       finalDeadline = newTaskDeadline; 
     }
-    
-    // ส่งไปแค่นี้คลีนๆ (ชื่อ, วันที่ที่แปลงแล้วหรือค่าว่าง)
-    onSave(newTaskTitle, finalDeadline, noteText);
+    if (newTaskTitle.trim()) {
+    // กำหนดค่า finalDeadline เผื่อไว้ถ้าบอสมีการคำนวณฟอร์แมตวันที่
+    const finalDeadline = newTaskDeadline; 
+    onSave(newTaskTitle, finalDeadline, noteText ); // ส่งไปแค่นี้คลีนๆ บรรทัดเดียวพอครับบอส ลบตัวซ้ำออกให้หมด
+    onClose();
+  }
     
     // เคลียร์ค่าคืนสภาพเดิม
     setNewTaskTitle("");
@@ -44,7 +51,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
     setHasDeadline(false);
     setSelectedDate(undefined);
     setNoteText("");
-    onClose(); // ด
+    onClose();
   };
 
   return (

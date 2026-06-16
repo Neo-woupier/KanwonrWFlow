@@ -8,7 +8,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
-import { Task } from "./path_to_your_types"; // ดึง Type ที่บอสตั้งไว้มาใช้
 
 interface TaskListProps {
   tasks: Task[];
