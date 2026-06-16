@@ -20,15 +20,16 @@ export default function KanbanTablePage() {
     { name: "On Hold", count: tasks.filter(t => t.status === "On Hold").length }
   ];
 
-  // 🚨 เช็คตรงนี้: ต้องรับแค่ (title, deadline) 2 ค่าเท่านั้นครับบอส
-  const handleSaveNewTask = (title: string, deadline: string) => {
+  // 🚨 เช็คตรงนี้: ต้องรับแค่ (title, deadline, description) 3 ค่าเท่านั้นครับบอส
+  const handleSaveNewTask = (title: string, deadline: string, description: string) => {
     const newTask: Task = {
-      id: `TASK-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `TASK-${Math.floor(Math.random() * 10000)}`,
       title: title,
       status: "Todo",
       priority: "Medium",
       createdAt: "9 Jun 2026",
-      deadline: deadline || "No deadline set" // ถ้านไม่มีกำหนด จะขึ้นว่า No deadline set
+      deadline: deadline || "No deadline set",
+      description: description || "No description provided" // ถ้านไม่มีกำหนด จะขึ้นว่า No deadline set
     };
 
     setTasks([...tasks, newTask]);
