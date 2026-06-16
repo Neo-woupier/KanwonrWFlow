@@ -55,25 +55,6 @@ export default function KanbanTablePage() {
           </button>
         </div>
 
-        {/* แถบ Tabs */}
-        <nav className="flex space-x-2 border-b border-zinc-800 mb-6">
-          {tabs.map((tab) => (
-            <button
-              key={tab.name}
-              onClick={() => setActiveTab(tab.name)}
-              className={`flex items-center px-4 py-3 text-sm font-medium transition-colors border-b-2 ${
-                activeTab === tab.name
-                  ? "border-orange-500 text-zinc-100"
-                  : "border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
-              }`}
-            >
-              {tab.name}
-              <span className="ml-2 inline-flex items-center justify-center bg-zinc-800/80 text-zinc-300 text-xs rounded-full px-2 py-0.5">
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </nav>
 
         {/* Search & New Button */}
         <div className="flex justify-between items-center mb-4">
@@ -99,15 +80,15 @@ export default function KanbanTablePage() {
           tasks={tasks}
           activeTab={activeTab}
           tabCount={tabs.find((t) => t.name === activeTab)?.count || 0}
+          />
+        </div>
+
+        {/* --- เรียกใช้ Modal สั้นๆ แค่นี้เลย! --- */}
+        <CreateTaskModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveNewTask}
         />
       </div>
-
-      {/* --- เรียกใช้ Modal สั้นๆ แค่นี้เลย! --- */}
-      <CreateTaskModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveNewTask}
-      />
-    </div>
   );
 }
