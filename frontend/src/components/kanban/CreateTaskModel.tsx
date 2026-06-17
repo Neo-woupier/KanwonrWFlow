@@ -58,8 +58,8 @@ export default function CreateTaskModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 sm:p-6 w-full max-w-md sm:max-w-lg shadow-2xl max-h-[calc(100vh-2rem)] flex flex-col animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200">
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 sm:p-6 w-full max-w-md sm:max-w-lg shadow-2xl max-h-[calc(100vh-2rem)] flex flex-col animate-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center mb-5 border-b border-zinc-800 pb-4 shrink-0">
           <h2 className="text-lg sm:text-xl font-semibold text-zinc-100">
             Create New Task
@@ -72,7 +72,7 @@ export default function CreateTaskModal({
           </button>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-5 overflow-y-auto flex-1 pr-1 -mr-1">
           {/* 1. Task Title */}
           <div className="w-full">
             <label className="block text-xs sm:text-sm font-medium text-zinc-400 mb-1.5">
@@ -118,14 +118,11 @@ export default function CreateTaskModal({
                   </PopoverTrigger>
 
                   <PopoverContent
-                    className="w-auto p-0 bg-zinc-950 border-zinc-800 z-50 pointer-events-auto"
+                    className="w-auto max-w-[calc(100vw-2rem)] sm:max-w-none p-0 bg-zinc-950 border-zinc-800 z-50 pointer-events-auto"
                     align="center"
                     sideOffset={4}
-                    {...({
-                      align: { initial: "center", sm: "start" }
-                    } as any)} // 💡 รองรับการสลับตำแหน่งตามขนาดหน้าจอหาก Lib รองรับ หรือใช้สไตล์ตรงกลางบนโมบายล์เป็นหลักเพื่อความชัวร์
                   >
-                    <div className="max-w-[280px] sm:max-w-none overflow-x-auto [color-scheme:dark]">
+                    <div className="w-full max-w-[280px] sm:max-w-none overflow-x-auto [color-scheme:dark]">
                       <Calendar
                         mode="single"
                         selected={selectedDate}

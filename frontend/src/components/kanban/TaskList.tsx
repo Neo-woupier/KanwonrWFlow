@@ -26,7 +26,7 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
             <TableHead className="px-4 py-3 text-sm font-semibold text-zinc-300 h-auto align-middle">
               {tabCount} {activeTab} tasks
             </TableHead>
-            <TableHead className="text-right px-4 py-3 text-sm font-semibold text-zinc-400 h-auto align-middle w-[160px]">
+            <TableHead className="text-right px-4 py-3 text-sm font-semibold text-zinc-400 h-auto align-middle w-28 sm:w-[160px] whitespace-normal">
               Actions
             </TableHead>
           </TableRow>
@@ -39,7 +39,7 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
               className="hover:bg-zinc-900/50 transition-colors border-b border-zinc-800/80 last:border-b-0"
             >
               {/* รายละเอียด Task */}
-              <TableCell className="p-4 align-top">
+              <TableCell className="p-4 align-top whitespace-normal break-words">
                 <div className="flex items-start space-x-3">
                   <div className="mt-1 flex-shrink-0">
                     <div className="h-4 w-4 rounded-full bg-[#3fb950]"></div>
@@ -78,9 +78,9 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
               </TableCell>
 
               {/* ปุ่ม Action ย้ายสถานะ */}
-              <TableCell className="p-4 text-right align-middle text-zinc-500 text-xs w-[160px]">
+              <TableCell className="p-4 text-right align-middle text-zinc-500 text-xs w-28 sm:w-[160px] whitespace-normal">
                 {task.status === "Todo" ? (
-                  <button className="px-3 py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 border border-blue-500/30 rounded-md transition-colors font-medium">
+                  <button className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 border border-blue-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs">
                     Start Progress
                   </button>
                 ) : (

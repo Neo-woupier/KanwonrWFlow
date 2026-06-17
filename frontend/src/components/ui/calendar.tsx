@@ -34,12 +34,12 @@ function Calendar({
           "h-14 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute -right-8 text-zinc-100 border-zinc-800 hover:bg-zinc-800"
         ),
         weekdays: "flex",
-        weekday: "text-zinc-400 rounded-md w-9 font-normal text-[0.8rem]", // ปรับสีชื่อวัน (อา.-ส.) ให้เห็นชัด
+        weekday: "text-zinc-400 rounded-md w-8 sm:w-9 font-normal text-[0.8rem]", // ปรับสีชื่อวัน (อา.-ส.) ให้เห็นชัด
         week: "flex w-full mt-2",
         day: "p-0 text-center text-sm relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-zinc-800/50 [&:has([aria-selected])]:bg-zinc-800 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         day_button: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal text-zinc-100 hover:bg-zinc-800 hover:text-zinc-50 rounded-md aria-selected:opacity-100" // 🎯 ปรับให้ตัวเลขวันที่เป็นสีขาว ไม่จมดินแล้วครับ!
+          "h-8 w-8 sm:h-9 sm:w-9 p-0 font-normal text-zinc-100 hover:bg-zinc-800 hover:text-zinc-50 rounded-md aria-selected:opacity-100" // 🎯 ปรับให้ตัวเลขวันที่เป็นสีขาว ไม่จมดินแล้วครับ!
         ),
         selected: "bg-zinc-100 text-zinc-950 hover:bg-zinc-100 hover:text-zinc-950 focus:bg-zinc-100 focus:text-zinc-950 rounded-md", // วันที่กดเลือก ให้พื้นขาวตัวหนังสือดำเด่นๆ
         today: "bg-zinc-800 text-zinc-100 rounded-md",
