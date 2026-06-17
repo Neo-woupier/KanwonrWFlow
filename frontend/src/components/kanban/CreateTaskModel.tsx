@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { format } from "date-fns"; 
+import { format } from "date-fns";
 import { X, Plus, Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "../ui/calendar"; // 🎯 ปรับให้เรียกจากตำแหน่งโฟลเดอร์ที่ถูกต้อง
@@ -12,12 +12,16 @@ import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟ
 interface CreateTaskModalProps {
   isOpen: boolean; // เช็คว่าเปิดอยู่ไหม
   onClose: () => void; // ฟังก์ชันตอนกดปิด
-  onSave: ( title: string, deadline: string, description: string) => void; // ฟังก์ชันตอนกดเซฟ พร้อมส่งข้อมูลกลับ
+  onSave: (title: string, deadline: string, description: string) => void; // ฟังก์ชันตอนกดเซฟ พร้อมส่งข้อมูลกลับ
   onAddNote?: (note: string) => void;
   onAddDrawing?: (drawingData: string) => void;
 }
 
-export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskModalProps) {
+export default function CreateTaskModal({
+  isOpen,
+  onClose,
+  onSave,
+}: CreateTaskModalProps) {
   // ย้าย State ที่ใช้เฉพาะใน Pop-up มาไว้ในนี้ทั้งหมด
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDeadline, setNewTaskDeadline] = useState("");
@@ -28,7 +32,6 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
 
   // ถ้าไม่ได้สั่งเปิด ให้คืนค่า null (ไม่แสดงอะไรเลย)
   if (!isOpen) return null;
-  
 
   // ฟังก์ชันแพ็คข้อมูลส่งกลับ
   const handleSaveClick = () => {
@@ -36,15 +39,15 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
     // --- ส่งวันที่ที่แปลงร่างเป็น DD/MM/YYYY เรียบร้อยแล้วข้ามไปที่หน้า Page ---
     let finalDeadline = "";
     if (hasDeadline && newTaskDeadline) {
-      finalDeadline = newTaskDeadline; 
+      finalDeadline = newTaskDeadline;
     }
     if (newTaskTitle.trim()) {
-    // กำหนดค่า finalDeadline เผื่อไว้ถ้าบอสมีการคำนวณฟอร์แมตวันที่
-    const finalDeadline = newTaskDeadline; 
-    onSave(newTaskTitle, finalDeadline, noteText ); // ส่งไปแค่นี้คลีนๆ บรรทัดเดียวพอครับบอส ลบตัวซ้ำออกให้หมด
-    onClose();
-  }
-    
+      // กำหนดค่า finalDeadline เผื่อไว้ถ้าบอสมีการคำนวณฟอร์แมตวันที่
+      const finalDeadline = newTaskDeadline;
+      onSave(newTaskTitle, finalDeadline, noteText); // ส่งไปแค่นี้คลีนๆ บรรทัดเดียวพอครับบอส ลบตัวซ้ำออกให้หมด
+      onClose();
+    }
+
     // เคลียร์ค่าคืนสภาพเดิม
     setNewTaskTitle("");
     setNewTaskDeadline("");
@@ -55,15 +58,15 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 w-full max-w-lg shadow-2xl animate-in zoom-in-95 duration-200">
-        <div className="flex justify-between items-center mb-5 border-b border-zinc-800 pb-4">
-          <h2 className="text-xl font-semibold text-zinc-100">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+      <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 sm:p-6 w-full max-w-md sm:max-w-lg shadow-2xl max-h-[calc(100vh-2rem)] flex flex-col animate-in zoom-in-95 duration-200">
+        <div className="flex justify-between items-center mb-5 border-b border-zinc-800 pb-4 shrink-0">
+          <h2 className="text-lg sm:text-xl font-semibold text-zinc-100">
             Create New Task
           </h2>
           <button
             onClick={onClose}
-            className="text-zinc-500 hover:text-zinc-300 transition-colors bg-zinc-900/50 hover:bg-zinc-800 p-1.5 rounded-md"
+            className="text-zinc-500 hover:text-zinc-300 transition-colors bg-zinc-900/50 hover:bg-zinc-800 p-1.5 rounded-md cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
@@ -71,8 +74,8 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
 
         <div className="space-y-5">
           {/* 1. Task Title */}
-          <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+          <div className="w-full">
+            <label className="block text-xs sm:text-sm font-medium text-zinc-400 mb-1.5">
               Task Title <span className="text-red-500">*</span>
             </label>
             <Input
@@ -81,50 +84,60 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
                 setNewTaskTitle(e.target.value)
               }
               placeholder="e.g. Update user authentication..."
-              className="bg-zinc-900/50 border-zinc-800 text-zinc-100 focus-visible:ring-zinc-700"
+              className="w-full bg-zinc-900/50 border-zinc-800 text-zinc-100 focus-visible:ring-zinc-700 h-9 sm:h-10 text-sm placeholder:text-zinc-600"
               autoFocus
             />
           </div>
 
           {/* 2. Custom Deadline (เปลี่ยนมาใช้ Shadcn DatePicker เรียบร้อย) */}
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+            <label className="block text-xs sm:text-sm font-medium text-zinc-400 mb-1.5">
               Deadline
             </label>
             {!hasDeadline ? (
               <button
+                type="button"
                 onClick={() => setHasDeadline(true)}
-                className="w-full py-2 px-3 border border-dashed border-zinc-700 rounded-md text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 hover:bg-zinc-900/50 transition-all text-sm text-left flex items-center"
+                className="w-full h-9 sm:h-10 px-3 border border-dashed border-zinc-700 rounded-md text-zinc-500 hover:text-zinc-300 hover:border-zinc-500 hover:bg-zinc-900/50 transition-all text-xs sm:text-sm text-left flex items-center cursor-pointer"
               >
-                <Plus className="w-4 h-4 mr-2" /> Add a deadline
+                <Plus className="w-4 h-4 mr-2 shrink-0" /> Add a deadline
               </button>
             ) : (
-              <div className="flex items-center space-x-2 animate-in fade-in slide-in-from-top-1">
+              <div className="flex items-center gap-2 w-full animate-in fade-in slide-in-from-top-1">
                 <Popover>
                   {/* 🎯 จุดเปลี่ยนสำคัญ: ลบ asChild ออก และเปลี่ยน <PopoverTrigger> ให้ทำหน้าที่เป็นปุ่มแทนสไตล์เดิมเลยครับ */}
-                  <PopoverTrigger className="flex-1 inline-flex items-center justify-start text-left font-normal bg-zinc-900/50 border border-zinc-800 text-zinc-100 hover:bg-zinc-900 hover:text-zinc-100 [color-scheme:dark] rounded-md h-9 px-4 text-sm transition-colors">
-                    <CalendarIcon className="mr-2 h-4 w-4 text-zinc-400" />
-                    {selectedDate ? (
-                      format(selectedDate, "dd/MM/yyyy")
-                    ) : (
-                      <span className="text-zinc-500">Pick a date</span>
-                    )}
+                  <PopoverTrigger className="flex-1 inline-flex items-center justify-start text-left font-normal bg-zinc-900/50 border border-zinc-800 text-zinc-100 hover:bg-zinc-900 hover:text-zinc-100 [color-scheme:dark] rounded-md h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm transition-colors cursor-pointer min-w-0 overflow-hidden">
+                    <CalendarIcon className="mr-2 h-4 w-4 text-zinc-400 shrink-0" />
+                    <span className="truncate">
+                      {selectedDate ? (
+                        format(selectedDate, "dd/MM/yyyy")
+                      ) : (
+                        <span className="text-zinc-500">Pick a date</span>
+                      )}
+                    </span>
                   </PopoverTrigger>
 
                   <PopoverContent
-                    className="w-auto p-0 bg-zinc-950 border-zinc-800"
-                    align="start"
+                    className="w-auto p-0 bg-zinc-950 border-zinc-800 z-50 pointer-events-auto"
+                    align="center"
+                    sideOffset={4}
+                    {...({
+                      align: { initial: "center", sm: "start" }
+                    } as any)} // 💡 รองรับการสลับตำแหน่งตามขนาดหน้าจอหาก Lib รองรับ หรือใช้สไตล์ตรงกลางบนโมบายล์เป็นหลักเพื่อความชัวร์
                   >
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={(date) => {
-                        setSelectedDate(date);
-                        if (date) {
-                          setNewTaskDeadline(format(date, "dd/MM/yyyy"));
-                        }
-                      }}
-                    />
+                    <div className="max-w-[280px] sm:max-w-none overflow-x-auto [color-scheme:dark]">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(date) => {
+                          setSelectedDate(date);
+                          if (date) {
+                            setNewTaskDeadline(format(date, "dd/MM/yyyy"));
+                          }
+                        }}
+                        className="p-3 bg-zinc-950 text-zinc-100"
+                      />
+                    </div>
                   </PopoverContent>
                 </Popover>
 
@@ -169,7 +182,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
                 placeholder="Add details, links, or context here..."
                 className="w-full h-24 rounded-md bg-zinc-900/50 border border-zinc-800 text-zinc-100 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
                 value={noteText}
-                onChange={(e) => setNoteText(e.target.value)} 
+                onChange={(e) => setNoteText(e.target.value)}
               />
             ) : (
               <div className="w-full h-32 rounded-md bg-zinc-900/30 border-2 border-dashed border-zinc-800 flex flex-col items-center justify-center text-zinc-500 cursor-crosshair">
@@ -196,6 +209,7 @@ export default function CreateTaskModal({ isOpen, onClose, onSave }: CreateTaskM
             Save Task
           </Button>
         </div>
+
       </div>
     </div>
   );
