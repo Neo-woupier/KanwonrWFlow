@@ -1,3 +1,5 @@
+// frontend/src/components/kanban/TaskList.tsx
+
 import React from "react";
 import {
   Table,
@@ -8,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
+import { TaskRow } from "./TaskRow";
 
 interface TaskListProps {
   tasks: Task[];
