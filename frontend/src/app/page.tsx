@@ -14,14 +14,24 @@ export default function KanbanTablePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const tabs = [
-    { name: "Todo", count: tasks.filter(t => t.status === "Todo").length },
-    { name: "In Progress", count: tasks.filter(t => t.status === "In Progress").length },
-    { name: "Done", count: tasks.filter(t => t.status === "Done").length },
-    { name: "On Hold", count: tasks.filter(t => t.status === "On Hold").length }
+    { name: "Todo", count: tasks.filter((t) => t.status === "Todo").length },
+    {
+      name: "In Progress",
+      count: tasks.filter((t) => t.status === "In Progress").length,
+    },
+    { name: "Done", count: tasks.filter((t) => t.status === "Done").length },
+    {
+      name: "On Hold",
+      count: tasks.filter((t) => t.status === "On Hold").length,
+    },
   ];
 
   // 🚨 เช็คตรงนี้: ต้องรับแค่ (title, deadline, description) 3 ค่าเท่านั้นครับบอส
-  const handleSaveNewTask = (title: string, deadline: string, description: string) => {
+  const handleSaveNewTask = (
+    title: string,
+    deadline: string,
+    description: string,
+  ) => {
     const newTask: Task = {
       id: `TASK-${Math.floor(Math.random() * 10000)}`,
       title: title,
@@ -29,12 +39,25 @@ export default function KanbanTablePage() {
       priority: "Medium",
       createdAt: "9 Jun 2026",
       deadline: deadline || "No deadline set",
-      description: description || "No description provided" // ถ้านไม่มีกำหนด จะขึ้นว่า No deadline set
+      description: description || "No description provided", // ถ้านไม่มีกำหนด จะขึ้นว่า No deadline set
     };
 
     setTasks([...tasks, newTask]);
     setIsModalOpen(false); // ปิด Pop-up
-    setActiveTab("Todo");  // เด้งกลับมาหน้า Todo เพื่อดูงานที่สร้างใหม่
+    setActiveTab("Todo"); // เด้งกลับมาหน้า Todo เพื่อดูงานที่สร้างใหม่
+  };
+
+  // วางไว้ด้านบนใน component ของ page.tsx
+  const handleUpdateStatus = (id: string, newStatus: string) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, status: newStatus as any } : task,
+      ),
+    );
+  };
+
+  const handleDeleteTask = (id: string) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
   return (
@@ -99,15 +122,17 @@ export default function KanbanTablePage() {
           tasks={tasks}
           activeTab={activeTab}
           tabCount={tabs.find((t) => t.name === activeTab)?.count || 0}
-          />
-        </div>
-
-        {/* --- เรียกใช้ Modal สั้นๆ แค่นี้เลย! --- */}
-        <CreateTaskModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveNewTask}
+          onUpdateStatus={handleUpdateStatus}
+          onDeleteTask={handleDeleteTask}
         />
       </div>
+
+      {/* --- เรียกใช้ Modal สั้นๆ แค่นี้เลย! --- */}
+      <CreateTaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveNewTask}
+      />
+    </div>
   );
 }

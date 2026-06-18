@@ -16,6 +16,8 @@ interface TaskListProps {
   tasks: Task[];
   activeTab: string;
   tabCount: number;
+  onUpdateStatus: (id: string, newStatus: string) => void; // รับรีโมทเปลี่ยนสถานะ
+  onDeleteTask: (id: string) => void;                      // รับรีโมทลบงาน
 }
 
 export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) {
@@ -41,7 +43,7 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
               key={task.id}
               className="hover:bg-zinc-900/50 transition-colors border-b border-zinc-800/80 last:border-b-0"
             >
-              {/* รายละเอียด Task */}
+              {/* ส่วนรายละเอียด Task คงรูปแบบเดิมไว้ทั้งหมด */}
               <TableCell className="p-4 align-top whitespace-normal break-words">
                 <div className="flex items-start space-x-3">
                   <div className="mt-1 flex-shrink-0">
@@ -57,12 +59,8 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
                       </span>
                     </div>
 
-                    {/* โชว์ Deadline สีส้มให้เห็นชัดๆ */}
                     <div className="text-xs text-zinc-500 mt-1 flex items-center space-x-2">
-                      {/* 🚨🚨🚨 [BACKEND COMMENT] 🚨🚨🚨
-                          ตอนนี้ดึงวันที่ปัจจุบันจากเครื่องคอมพิวเตอร์ (Mock ไว้ก่อน)
-                          ถ้าต่อ Backend เสร็จแล้ว ให้เปลี่ยนจาก new Date().toLocaleDateString(...) 
-                          เป็นวันที่จริงจากฐานข้อมูล เช่น task.createdAt หรือ task.date ได้เลยครับบอส! */}
+                      {/* รอเปลี่ยนเป็นวันที่จาก Backend */}
                       <span>
                         {new Date().toLocaleDateString("th-TH", {
                           year: "numeric",
@@ -70,7 +68,6 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
                           day: "2-digit",
                         })}
                       </span>
-
                       <span>•</span>
                       <span className="text-orange-400/80 font-medium">
                         Deadline: {task.deadline}
@@ -80,15 +77,53 @@ export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) 
                 </div>
               </TableCell>
 
-              {/* ปุ่ม Action ย้ายสถานะ */}
-              <TableCell className="p-4 text-right align-middle text-zinc-500 text-xs w-28 sm:w-[160px] whitespace-normal">
-                {task.status === "Todo" ? (
-                  <button className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 border border-blue-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs">
-                    Start Progress
+              {/* ส่วน Actions: จัดการปุ่มตาม Status ของ Task */}
+              <TableCell className="p-4 text-right align-middle text-zinc-500 w-28 sm:w-[200px] whitespace-normal">
+                <div className="flex items-center justify-end gap-2">
+                  {/* ปุ่มสำหรับ Todo */}
+                  {task.status === "Todo" && (
+                    <button
+                      onClick={() => onUpdateStatus(task.id, "In Progress")}
+                      className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 border border-blue-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
+                    >
+                      Start Progress
+                    </button>
+                  )}
+
+                  {/* ปุ่มสำหรับ In Progress */}
+                  {task.status === "In Progress" && (
+                    <>
+                      <button
+                        onClick={() => onUpdateStatus(task.id, "Done")}
+                        className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/40 border border-green-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
+                      >
+                        Done
+                      </button>
+                      <button
+                        onClick={() => onUpdateStatus(task.id, "On Hold")}
+                        className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600/40 border border-yellow-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
+                      >
+                        On Hold
+                      </button>
+                    </>
+                  )}
+
+                  {/* ไม่มีปุ่ม Action พิเศษสำหรับ Done หรือ On Hold ให้แสดงข้อความ */}
+                  {(task.status === "Done" || task.status === "On Hold") && (
+                    <span className="text-zinc-600 italic text-xs mr-2">
+                      No action
+                    </span>
+                  )}
+
+                  {/* ปุ่มลบงาน แสดงตลอดทุกสถานะ */}
+                  <button
+                    onClick={() => onDeleteTask(task.id)}
+                    className="p-1.5 text-zinc-600 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors cursor-pointer"
+                    title="Delete Task"
+                  >
+                    <X className="w-4 h-4" />
                   </button>
-                ) : (
-                  <span className="text-zinc-500 italic">No action</span>
-                )}
+                </div>
               </TableCell>
             </TableRow>
           ))}
