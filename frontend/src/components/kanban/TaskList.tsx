@@ -11,17 +11,24 @@ import {
 } from "@/components/ui/table";
 import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
 import { TaskRow } from "./TaskRow";
+import { X } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
   activeTab: string;
   tabCount: number;
   onUpdateStatus: (id: string, newStatus: string) => void; // รับรีโมทเปลี่ยนสถานะ
-  onDeleteTask: (id: string) => void;                      // รับรีโมทลบงาน
+  onDeleteTask: (id: string) => void; // รับรีโมทลบงาน
 }
 
-export default function TaskList({ tasks, activeTab, tabCount }: TaskListProps) {
-  const filteredTasks = tasks.filter(task => task.status === activeTab);
+export default function TaskList({
+  tasks,
+  activeTab,
+  tabCount,
+  onUpdateStatus,
+  onDeleteTask,
+}: TaskListProps) {
+  const filteredTasks = tasks.filter((task) => task.status === activeTab);
 
   return (
     <div className="border border-zinc-700 rounded-md overflow-hidden bg-zinc-950">
