@@ -33,22 +33,49 @@ export default function TaskList({
   return (
     <div className="border border-zinc-700 rounded-md overflow-hidden bg-zinc-950">
       <Table>
+        {/* Table container with border, rounded corners, and dark background */}
+        {/* กล่อง/พื้นที่สำหรับใส่ตารางที่มีเส้นขอ(มี) มุมที่โค้งมนและมีพื้นหลังสีเข้ม*/}
         <TableHeader className="bg-zinc-900 hover:bg-zinc-900 border-b border-zinc-700">
           <TableRow className="hover:bg-transparent border-b-0">
+            {/* ฝั่งซ้าย: โชว์จำนวน Task + ปุ่มเปิด Note */}
             <TableHead className="px-4 py-3 text-sm font-semibold text-zinc-300 h-auto align-middle">
-              {tabCount} {activeTab} tasks
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <span>
+                  {tabCount} {activeTab} tasks
+                </span>
+
+                {/* ปุ่ม Item สำหรับกดเปิด Note (ปรับ UI ให้ดูเป็นปุ่มมากขึ้น) */}
+                <button
+                  type="button"
+                  onClick={() => setIsNoteModalOpen(true)} // 🎯 กดแล้วเรียก Popup
+                  className="flex items-center gap-2.5 px-3 py-1.5 border border-zinc-700 rounded-md bg-transparent hover:bg-zinc-800 transition-colors w-fit cursor-pointer"
+                >
+                  {/* ไอคอนด้านซ้าย */}
+                  <StickyNote className="w-4 h-4 text-zinc-400" />
+
+                  {/* ข้อความตรงกลาง */}
+                  <span className="text-sm font-medium text-zinc-300">
+                    Board Notes
+                  </span>
+
+                  {/* ไอคอนลูกศรด้านขวา */}
+                  <ChevronRight className="w-4 h-4 text-zinc-500" />
+                </button>
+              </div>
             </TableHead>
-            <TableHead className="text-right px-4 py-3 text-sm font-semibold text-zinc-400 h-auto align-middle w-28 sm:w-[160px] whitespace-normal">
+
+            {/* ฝั่งขวา: Actions */}
+            <TableHead className="text-right px-4 py-3 text-sm font-semibold text-dd-400 h-auto align-middle w-28 sm:w-[160px] whitespace-normal">
               Actions
             </TableHead>
           </TableRow>
         </TableHeader>
 
-        <TableBody className="divide-y divide-zinc-800/80">
+        <TableBody className="divide-y divide-dd-800/80">
           {filteredTasks.map((task) => (
             <TableRow
               key={task.id}
-              className="hover:bg-zinc-900/50 transition-colors border-b border-zinc-800/80 last:border-b-0"
+              className="hover:bg-dd-900/50 transition-colors border-b border-zinc-800/80 last:border-b-0"
             >
               {/* ส่วนรายละเอียด Task คงรูปแบบเดิมไว้ทั้งหมด */}
               <TableCell className="p-4 align-top whitespace-normal break-words">
@@ -57,8 +84,7 @@ export default function TaskList({
                   <div className="mt-0.5 flex-shrink-0">
                     <Goal className="h-5 w-5 text-green-500 animate-pulse" />
                   </div>
-                  <div>  
-                  </div>
+                  <div></div>
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-1">
                       <span className="text-[16px] font-semibold text-zinc-100">
