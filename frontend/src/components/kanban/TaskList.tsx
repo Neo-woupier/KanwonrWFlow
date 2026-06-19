@@ -81,11 +81,10 @@ export default function TaskList({
               // 🎯 กดที่แถวแล้วพาไปหน้า Link รายละเอียด Task ใหม่
               onClick={() => router.push(`/task/${task.id}`)}
               // 🎯 เอาเมาส์มา hover แล้วจะขึ้นข้อความรายละเอียด (detail) ของ task นั้น
-              title={task.detail || "No details provided"}
-              className="hover:bg-zinc-800/50 transition-colors border-b border-zinc-800/80 last:border-b-0 cursor-pointer"
+              className="hover:bg-zinc-800/50 transition-colors border-b border-zinc-800/80 last:border-b-0 cursor-pointer group"
             >
               {/* ส่วนรายละเอียด Task คงรูปแบบเดิมไว้ทั้งหมด */}
-              <TableCell className="p-4 align-top whitespace-normal break-words">
+              <TableCell className="p-4 align-top whitespace-normal break-words relative">
                 <div className="flex items-start space-x-3">
                   {/* ส่วนไอคอนเป้าธนู */}
                   <div className="mt-0.5 flex-shrink-0">
