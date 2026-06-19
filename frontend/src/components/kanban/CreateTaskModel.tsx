@@ -10,6 +10,7 @@ import { Input } from "../ui/input"; // หรือ "@/components/ui/input" ต
 import { title } from "process";
 import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
 
+
 // กำหนดสะพานเชื่อม (Props) ให้ไฟล์นี้รับคำสั่งจากหน้า Page ได้
 interface CreateTaskModalProps {
   isOpen: boolean; // เช็คว่าเปิดอยู่ไหม
@@ -31,6 +32,7 @@ export default function CreateTaskModal({
   const [noteMode, setNoteMode] = useState<"text" | "draw">("text");
   const [selectedDate, setSelectedDate] = useState<Date>(); // ใช้เก็บก้อนวัตถุวันที่ของปฏิทิน
   const [noteText, setNoteText] = useState("");
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // ถ้าไม่ได้สั่งเปิด ให้คืนค่า null (ไม่แสดงอะไรเลย)
   if (!isOpen) return null;
@@ -106,8 +108,8 @@ export default function CreateTaskModal({
               </button>
             ) : (
               <div className="flex items-center gap-2 w-full animate-in fade-in slide-in-from-top-1">
-                <Popover>
-                  {/* 🎯 จุดเปลี่ยนสำคัญ: ลบ asChild ออก และเปลี่ยน <PopoverTrigger> ให้ทำหน้าที่เป็นปุ่มแทนสไตล์เดิมเลยครับ */}
+                {/* 1. ใส่ open และ onOpenChange เพื่อให้เปิด-ปิดตาม State ของเรา */}
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger className="flex-1 inline-flex items-center justify-start text-left font-normal bg-zinc-900/50 border border-zinc-800 text-zinc-100 hover:bg-zinc-900 hover:text-zinc-100 [color-scheme:dark] rounded-md h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm transition-colors cursor-pointer min-w-0 overflow-hidden">
                     <CalendarIcon className="mr-2 h-4 w-4 text-zinc-400 shrink-0" />
                     <span className="truncate">
@@ -133,6 +135,10 @@ export default function CreateTaskModal({
                           if (date) {
                             setNewTaskDeadline(format(date, "dd/MM/yyyy"));
                           }
+                          {
+                            /* 2. 🎯 สั่งปิดปฏิทินทันทีหลังจากเลือกวันที่เสร็จ */
+                          }
+                          setIsCalendarOpen(false);
                         }}
                         className="p-3 bg-zinc-950 text-zinc-100"
                       />
@@ -208,7 +214,6 @@ export default function CreateTaskModal({
             Save Task
           </Button>
         </div>
-
       </div>
     </div>
   );
