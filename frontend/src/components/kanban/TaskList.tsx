@@ -1,6 +1,7 @@
 // frontend/src/components/kanban/TaskList.tsx
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -30,6 +31,7 @@ export default function TaskList({
 }: TaskListProps) {
   const filteredTasks = tasks.filter((task) => task.status === activeTab);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="border border-zinc-700 rounded-md overflow-hidden bg-zinc-950">
@@ -76,7 +78,11 @@ export default function TaskList({
           {filteredTasks.map((task) => (
             <TableRow
               key={task.id}
-              className="hover:bg-dd-900/50 transition-colors border-b border-zinc-800/80 last:border-b-0"
+              // 🎯 กดที่แถวแล้วพาไปหน้า Link รายละเอียด Task ใหม่
+              onClick={() => router.push(`/task/${task.id}`)}
+              // 🎯 เอาเมาส์มา hover แล้วจะขึ้นข้อความรายละเอียด (detail) ของ task นั้น
+              title={task.detail || "No details provided"}
+              className="hover:bg-zinc-800/50 transition-colors border-b border-zinc-800/80 last:border-b-0 cursor-pointer"
             >
               {/* ส่วนรายละเอียด Task คงรูปแบบเดิมไว้ทั้งหมด */}
               <TableCell className="p-4 align-top whitespace-normal break-words">
@@ -120,7 +126,11 @@ export default function TaskList({
                   {/* ปุ่มสำหรับ Todo */}
                   {task.status === "Todo" && (
                     <button
-                      onClick={() => onUpdateStatus(task.id, "In Progress")}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
+                        onUpdateStatus(task.id, "In Progress");
+                      }}
                       className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 border border-blue-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
                     >
                       Start Progress
@@ -132,14 +142,20 @@ export default function TaskList({
                     <>
                       <button
                         type="button"
-                        onClick={() => onUpdateStatus(task.id, "Done")}
+                        onClick={(e) => {
+                          e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
+                          onUpdateStatus(task.id, "Done");
+                        }}
                         className="min-w-[80px] px-3 py-1.5 bg-green-900/40 text-green-300 hover:bg-green-800/60 border border-green-700/50 rounded-md transition-all font-medium text-[11px] sm:text-xs cursor-pointer shadow-sm active:scale-95"
                       >
                         Done
                       </button>
                       <button
                         type="button"
-                        onClick={() => onUpdateStatus(task.id, "On Hold")}
+                        onClick={(e) => {
+                          e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
+                          onUpdateStatus(task.id, "On Hold");
+                        }}
                         className="min-w-[80px] px-3 py-1.5 bg-yellow-900/40 text-yellow-300 hover:bg-yellow-800/60 border border-yellow-700/50 rounded-md transition-all font-medium text-[11px] sm:text-xs cursor-pointer shadow-sm active:scale-95"
                       >
                         On Hold
@@ -149,14 +165,18 @@ export default function TaskList({
 
                   {/* ไม่มีปุ่ม Action พิเศษสำหรับ Done หรือ On Hold ให้แสดงข้อความ */}
                   {(task.status === "Done" || task.status === "On Hold") && (
-                    <span className="text-zinc-600 italic text-xs mr-2">
+                    <span className="text-zinc-600 italic text-xs mr-2 select-none">
                       No action
                     </span>
                   )}
 
                   {/* ปุ่มลบงาน แสดงตลอดทุกสถานะ */}
                   <button
-                    onClick={() => onDeleteTask(task.id)}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
+                      onDeleteTask(task.id);
+                    }}
                     className="p-1.5 text-zinc-600 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors cursor-pointer"
                     title="Delete Task"
                   >
