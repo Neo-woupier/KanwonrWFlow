@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
 import { TaskRow } from "./TaskRow";
-import { X } from "lucide-react";
+import { X, Goal } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
@@ -53,8 +53,11 @@ export default function TaskList({
               {/* ส่วนรายละเอียด Task คงรูปแบบเดิมไว้ทั้งหมด */}
               <TableCell className="p-4 align-top whitespace-normal break-words">
                 <div className="flex items-start space-x-3">
-                  <div className="mt-1 flex-shrink-0">
-                    <div className="h-4 w-4 rounded-full bg-[#3fb950]"></div>
+                  {/* ส่วนไอคอนเป้าธนู */}
+                  <div className="mt-0.5 flex-shrink-0">
+                    <Goal className="h-5 w-5 text-green-500 animate-pulse" />
+                  </div>
+                  <div>  
                   </div>
                   <div>
                     <div className="flex items-center flex-wrap gap-2 mb-1">
@@ -101,14 +104,16 @@ export default function TaskList({
                   {task.status === "In Progress" && (
                     <>
                       <button
+                        type="button"
                         onClick={() => onUpdateStatus(task.id, "Done")}
-                        className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/40 border border-green-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
+                        className="min-w-[80px] px-3 py-1.5 bg-green-900/40 text-green-300 hover:bg-green-800/60 border border-green-700/50 rounded-md transition-all font-medium text-[11px] sm:text-xs cursor-pointer shadow-sm active:scale-95"
                       >
                         Done
                       </button>
                       <button
+                        type="button"
                         onClick={() => onUpdateStatus(task.id, "On Hold")}
-                        className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600/40 border border-yellow-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
+                        className="min-w-[80px] px-3 py-1.5 bg-yellow-900/40 text-yellow-300 hover:bg-yellow-800/60 border border-yellow-700/50 rounded-md transition-all font-medium text-[11px] sm:text-xs cursor-pointer shadow-sm active:scale-95"
                       >
                         On Hold
                       </button>
