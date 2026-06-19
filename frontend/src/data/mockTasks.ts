@@ -6,6 +6,7 @@ export type Task = {
   createdAt: string;
   deadline: string;
   description: string;
+  detail?: string;
 };
 
 // 2. เคลียร์ข้อมูลให้เป็น 0 ตามที่ต้องการ 
