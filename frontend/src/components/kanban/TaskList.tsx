@@ -1,6 +1,6 @@
 // frontend/src/components/kanban/TaskList.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Task } from "@/data/mockTasks"; // ดึง Type มาจากไฟล์ mock
 import { TaskRow } from "./TaskRow";
-import { X, Goal } from "lucide-react";
+import { X, Goal, StickyNote, ChevronRight} from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
@@ -29,6 +29,7 @@ export default function TaskList({
   onDeleteTask,
 }: TaskListProps) {
   const filteredTasks = tasks.filter((task) => task.status === activeTab);
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 
   return (
     <div className="border border-zinc-700 rounded-md overflow-hidden bg-zinc-950">
