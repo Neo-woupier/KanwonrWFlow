@@ -77,113 +77,39 @@ export default function TaskList({
         <TableBody className="divide-y divide-dd-800/80">
           {filteredTasks.map((task) => (
             <TableRow
-              key={task.id}
-              // 🎯 กดที่แถวแล้วพาไปหน้า Link รายละเอียด Task ใหม่
-              onClick={() => router.push(`/task/${task.id}`)}
-              // 🎯 เอาเมาส์มา hover แล้วจะขึ้นข้อความรายละเอียด (detail) ของ task นั้น
-              className="hover:bg-zinc-800/50 transition-colors border-b border-zinc-800/80 last:border-b-0 cursor-pointer group"
-            >
-              {/* ส่วนรายละเอียด Task คงรูปแบบเดิมไว้ทั้งหมด */}
-              <TableCell className="p-4 align-top whitespace-normal break-words relative">
-                <div className="flex items-start space-x-3">
-                  {/* ส่วนไอคอนเป้าธนู */}
-                  <div className="mt-0.5 flex-shrink-0">
-                    <Goal className="h-5 w-5 text-green-500 animate-pulse" />
-                  </div>
-                  <div></div>
-                  <div>
-                    <div className="flex items-center flex-wrap gap-2 mb-1">
-                      <span className="text-[16px] font-semibold text-zinc-100">
-                        {task.title}
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold border bg-[#58a6ff1a] text-[#58a6ff] border-[#58a6ff66]">
-                        {task.priority}
-                      </span>
-                    </div>
+  key={task.id}
+  onClick={() => router.push(`/task/${task.id}`)}
+  {/* 1. เอา title={...} ของเก่าออก และมั่นใจว่ามีคำว่า "group" อยู่ใน className */}
+  className="hover:bg-zinc-800/50 transition-colors border-b border-zinc-800/80 last:border-b-0 cursor-pointer group"
+>
+  
+  {/* 2. ในช่องแสดงชื่อ Task ให้ใส่ className="relative" เพื่อเป็นฐานให้ Tooltip ลอย */}
+  <TableCell className="p-4 align-middle font-medium text-zinc-100 relative">
+    
+    {/* ข้อความชื่อ Task ปกติของบอส */}
+    <span>{task.title}</span>
 
-                    <div className="text-xs text-zinc-500 mt-1 flex items-center space-x-2">
-                      {/* รอเปลี่ยนเป็นวันที่จาก Backend */}
-                      <span>
-                        {new Date().toLocaleDateString("th-TH", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </span>
-                      <span>•</span>
-                      <span className="text-orange-400/80 font-medium">
-                        Deadline: {task.deadline}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </TableCell>
+    {/* 🎯 3. กล่อง Tooltip ตัวใหญ่สะใจเวลาเมาส์ Hover */}
+    {task.detail && (
+      <div className="absolute left-4 bottom-full mb-2 z-50 hidden group-hover:block bg-zinc-900 border border-zinc-700 text-zinc-100 p-4 rounded-lg shadow-2xl max-w-sm pointer-events-none w-max animate-in fade-in zoom-in-95 duration-150">
+        <p className="text-xs font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
+          Task Description
+        </p>
+        {/* บอสปรับขนาดตัวหนังสือตรง text-base หรือ text-lg ได้ตามชอบเลยครับ */}
+        <p className="text-base font-medium text-zinc-200 whitespace-pre-wrap leading-relaxed">
+          {task.detail}
+        </p>
+      </div>
+    )}
 
-              {/* ส่วน Actions: จัดการปุ่มตาม Status ของ Task */}
-              <TableCell className="p-4 text-right align-middle text-zinc-500 w-28 sm:w-[200px] whitespace-normal">
-                <div className="flex items-center justify-end gap-2">
-                  {/* ปุ่มสำหรับ Todo */}
-                  {task.status === "Todo" && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
-                        onUpdateStatus(task.id, "In Progress");
-                      }}
-                      className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 border border-blue-500/30 rounded-md transition-colors font-medium text-[11px] sm:text-xs cursor-pointer"
-                    >
-                      Start Progress
-                    </button>
-                  )}
+  </TableCell>
 
-                  {/* ปุ่มสำหรับ In Progress */}
-                  {task.status === "In Progress" && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
-                          onUpdateStatus(task.id, "Done");
-                        }}
-                        className="min-w-[80px] px-3 py-1.5 bg-green-900/40 text-green-300 hover:bg-green-800/60 border border-green-700/50 rounded-md transition-all font-medium text-[11px] sm:text-xs cursor-pointer shadow-sm active:scale-95"
-                      >
-                        Done
-                      </button>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
-                          onUpdateStatus(task.id, "On Hold");
-                        }}
-                        className="min-w-[80px] px-3 py-1.5 bg-yellow-900/40 text-yellow-300 hover:bg-yellow-800/60 border border-yellow-700/50 rounded-md transition-all font-medium text-[11px] sm:text-xs cursor-pointer shadow-sm active:scale-95"
-                      >
-                        On Hold
-                      </button>
-                    </>
-                  )}
+  {/* ... ช่องข้อมูลอื่นๆ เช่น Deadline ... */}
 
-                  {/* ไม่มีปุ่ม Action พิเศษสำหรับ Done หรือ On Hold ให้แสดงข้อความ */}
-                  {(task.status === "Done" || task.status === "On Hold") && (
-                    <span className="text-zinc-600 italic text-xs mr-2 select-none">
-                      No action
-                    </span>
-                  )}
+  {/* ช่องปุ่ม Actions เดิมของบอส */}
+  <TableCell>...</TableCell>
 
-                  {/* ปุ่มลบงาน แสดงตลอดทุกสถานะ */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation(); // 🚨 กันไม่ให้คลิกทะลุไปหน้าดีเทล
-                      onDeleteTask(task.id);
-                    }}
-                    className="p-1.5 text-zinc-600 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors cursor-pointer"
-                    title="Delete Task"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </TableCell>
-            </TableRow>
+</TableRow>
           ))}
         </TableBody>
       </Table>
