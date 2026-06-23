@@ -6,6 +6,7 @@ import { X, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 interface Task {
   id: string;
   title: string;
+  detail: noteText,
   status: "Todo" | "In Progress" | "Done" | "On Hold";
   // ถ้าบอสมี deadline หรือ field อื่นๆ ใส่เพิ่มตรงนี้ได้เลยครับ เช่น deadline?: string;
 }
