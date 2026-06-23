@@ -119,7 +119,17 @@ export default function TaskList({
               <TableCell className="p-4 text-right align-middle text-zinc-500 w-28 sm:w-[200px] whitespace-normal">
                 <div className="flex items-center justify-end gap-2">
                   <span>{task.title}</span>
-                  
+                  {/* กล่องรายละเอียดที่จะเด้งขึ้นมาเฉพาะตอนเอาเมาส์ชี้แถวนั้น */}
+                  {task.detail && (
+                    <div className="absolute left-4 bottom-full mb-2 z-50 hidden group-hover:block bg-zinc-900 border border-zinc-700 text-zinc-100 p-4 rounded-lg shadow-2xl max-w-sm pointer-events-none w-max animate-in fade-in zoom-in-95 duration-150">
+                      <p className="text-xs font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
+                        Task Description
+                      </p>
+                      <p className="text-base font-medium text-zinc-200 whitespace-pre-wrap leading-relaxed">
+                        {task.detail}
+                      </p>
+                    </div>
+                  )}
                   {/* ปุ่มสำหรับ Todo */}
                   {task.status === "Todo" && (
                     <button
