@@ -125,6 +125,7 @@ export default function CreateTaskModal({
                     className="w-auto max-w-[calc(100vw-2rem)] sm:max-w-none p-0 bg-zinc-950 border-zinc-800 z-50 pointer-events-auto"
                     align="center"
                     sideOffset={4}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <div className="w-full max-w-[280px] sm:max-w-none overflow-x-auto [color-scheme:dark]">
                       <Calendar
