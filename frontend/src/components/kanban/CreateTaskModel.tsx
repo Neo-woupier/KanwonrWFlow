@@ -64,7 +64,9 @@ export default function CreateTaskModal({
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-2 sm:p-4 animate-in fade-in duration-200">
       <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-4 sm:p-6 w-full max-w-md sm:max-w-lg shadow-2xl max-h-[calc(100vh-2rem)] flex flex-col animate-in zoom-in-95 duration-200">
-        <div className="flex justify-between items-center mb-5 border-b border-zinc-800 pb-4 shrink-0">
+        
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4 sm:mb-5 border-b border-zinc-800 pb-4 shrink-0">
           <h2 className="text-lg sm:text-xl font-semibold text-zinc-100">
             Create New Task
           </h2>
@@ -76,7 +78,9 @@ export default function CreateTaskModal({
           </button>
         </div>
 
-        <div className="space-y-5 overflow-y-auto flex-1 pr-1 -mr-1">
+        {/* Body (ใส่ min-h-0 เพื่อให้มันยอม Scroll ได้เวลาย่อหน้าจอเตี้ยๆ) */}
+        <div className="space-y-4 sm:space-y-5 overflow-y-auto flex-1 min-h-0 pr-1 -mr-1">
+          
           {/* 1. Task Title */}
           <div className="w-full">
             <label className="block text-xs sm:text-sm font-medium text-zinc-400 mb-1.5">
@@ -93,7 +97,7 @@ export default function CreateTaskModal({
             />
           </div>
 
-          {/* 2. Custom Deadline (เปลี่ยนมาใช้ Shadcn DatePicker เรียบร้อย) */}
+          {/* 2. Custom Deadline */}
           <div>
             <label className="block text-xs sm:text-sm font-medium text-zinc-400 mb-1.5">
               Deadline
@@ -108,7 +112,6 @@ export default function CreateTaskModal({
               </button>
             ) : (
               <div className="flex items-center gap-2 w-full animate-in fade-in slide-in-from-top-1">
-                {/* 1. ใส่ open และ onOpenChange เพื่อให้เปิด-ปิดตาม State ของเรา */}
                 <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger className="flex-1 inline-flex items-center justify-start text-left font-normal bg-zinc-900/50 border border-zinc-800 text-zinc-100 hover:bg-zinc-900 hover:text-zinc-100 [color-scheme:dark] rounded-md h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm transition-colors cursor-pointer min-w-0 overflow-hidden">
                     <CalendarIcon className="mr-2 h-4 w-4 text-zinc-400 shrink-0" />
@@ -136,12 +139,11 @@ export default function CreateTaskModal({
                           if (date) {
                             setNewTaskDeadline(format(date, "dd/MM/yyyy"));
                           }
-                          {
-                            /* 2. 🎯 สั่งปิดปฏิทินทันทีหลังจากเลือกวันที่เสร็จ */
-                          }
                           setIsCalendarOpen(false);
                         }}
                         className="p-3 bg-zinc-950 text-zinc-100"
+                        showOutsideDays={true}
+                        fixedWeeks={true}
                       />
                     </div>
                   </PopoverContent>
@@ -153,7 +155,7 @@ export default function CreateTaskModal({
                     setNewTaskDeadline("");
                     setSelectedDate(undefined);
                   }}
-                  className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
+                  className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors shrink-0"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -162,12 +164,12 @@ export default function CreateTaskModal({
           </div>
 
           {/* 3. Note Feature */}
-          <div className="pt-2">
+          <div className="pt-1">
             <div className="flex justify-between items-center mb-2">
               <label className="block text-sm font-medium text-zinc-400">
                 Notes / Details
               </label>
-              <div className="flex bg-zinc-900 rounded-md p-1 border border-zinc-800">
+              <div className="flex bg-zinc-900 rounded-md p-1 border border-zinc-800 shrink-0">
                 <button
                   onClick={() => setNoteMode("text")}
                   className={`text-xs px-3 py-1 rounded-sm transition-all ${noteMode === "text" ? "bg-zinc-700 text-zinc-100" : "text-zinc-500 hover:text-zinc-300"}`}
@@ -186,7 +188,7 @@ export default function CreateTaskModal({
             {noteMode === "text" ? (
               <textarea
                 placeholder="Add details, links, or context here..."
-                className="w-full h-24 rounded-md bg-zinc-900/50 border border-zinc-800 text-zinc-100 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
+                className="w-full h-24 sm:h-28 rounded-md bg-zinc-900/50 border border-zinc-800 text-zinc-100 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-700 resize-none"
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
               />
@@ -200,7 +202,8 @@ export default function CreateTaskModal({
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 mt-8 pt-4 border-t border-t-zinc-800/80">
+        {/* Footer (ใส่ shrink-0 เพื่อป้องกันปุ่มโดนบีบแบนจนเสียทรงเวลาย่อจอ) */}
+        <div className="flex justify-end space-x-3 mt-4 sm:mt-6 pt-4 border-t border-t-zinc-800/80 shrink-0">
           <Button
             variant="ghost"
             onClick={onClose}
